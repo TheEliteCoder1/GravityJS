@@ -12,6 +12,9 @@ var rectangleFillStyle = "red";
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const GFORCE = 9.8;
+const FLOORMASS = 100;
+
 function getCursorPositionOnMouseClick(canvas, event) {
     const rect = canvas.getBoundingClientRect()
     const mx = event.clientX - rect.left
@@ -28,7 +31,7 @@ canvas.addEventListener('mousedown', function(e) {
 
 // draw all rectangles using attrs
 class Rectangle {
-    constructor(x, y, width, height, lineWidth, strokeStyle, fillStyle) {
+    constructor(x, y, width, height, lineWidth, strokeStyle, fillStyle, mass) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -36,6 +39,8 @@ class Rectangle {
         this.lineWidth = lineWidth;
         this.strokeStyle = strokeStyle;
         this.fillStyle = fillStyle;
+        this.velocity = {"x": 0, "y": 0};
+        this.mass = 10;
     }
 
 
@@ -51,7 +56,8 @@ class Rectangle {
     }   
 }
 
-var FLOOR = new Rectangle(0, 0, canvas.width, canvas.height, rectangleLineWidth, rectangleStrokeStyle, rectangleFillStyle);
+// fills floor space from position (0, 800)
+var FLOOR = new Rectangle(0, 800, canvas.width-0, canvas.height-800, rectangleLineWidth, rectangleStrokeStyle, rectangleFillStyle);
 
 
 function draw(timestamp) {
@@ -63,10 +69,25 @@ function draw(timestamp) {
     for (var i = 0; i < rectangles.length; i++) {
         var rectangle = rectangles[i];
         // Apply Physics
+        // Implement F=ma (Applied force) mass * accel
+        // normal force stops if force of object is equal
+        // if weight is greater, than it will break the other
+        // object
+        // accel = velocity**time
+        // Implement Gravity force G = constant
+        // F = G(m1m2)/R2  m = mass, r = distance between
+        // both masses
+
+        this.velocity.y = GFORCE*(())
+
+        rectangle.x += rectangle.velocity.x;
+        rectangle.y += rectangle.velocity.y;
 
         // Draw
         rectangle.draw();
     }
+
+    FLOOR.draw();
 
 }
 

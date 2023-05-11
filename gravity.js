@@ -3,17 +3,17 @@ ctx = canvas.getContext('2d')
 
 
 var rectangles = [];
-var rectangleWidth = 20;
-var rectangleHeight = 20;
-var rectangleLineWidth = 5;
+var rectangleWidth = 40;
+var rectangleHeight = 40;
+var rectangleLineWidth = 0;
 var rectangleStrokeStyle = "lightgreen";
 var rectangleFillStyle = "red";
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const GFORCE = 9.8;
-const FLOORMASS = 100;
+const GFORCE = 10;
+const FLOORMASS = 100000;
 
 function getCursorPositionOnMouseClick(canvas, event) {
     const rect = canvas.getBoundingClientRect()
@@ -40,7 +40,7 @@ class Rectangle {
         this.strokeStyle = strokeStyle;
         this.fillStyle = fillStyle;
         this.velocity = {"x": 0, "y": 0};
-        this.mass = 10;
+        this.mass = 20;
     }
 
 
@@ -57,7 +57,21 @@ class Rectangle {
 }
 
 // fills floor space from position (0, 800)
-var FLOOR = new Rectangle(0, 800, canvas.width-0, canvas.height-800, rectangleLineWidth, rectangleStrokeStyle, rectangleFillStyle);
+var FLOOR = new Rectangle(0, canvas.height-100, canvas.width, 100, rectangleLineWidth, rectangleStrokeStyle, rectangleFillStyle);
+
+function getCenterOfRect(rectangle) {
+    return {"x":(rectangle.x  + rectangle.width) / 2, "y":(rectangle.y + rectangle.height) / 2};
+}
+
+function touches(a, b) {
+	// has horizontal gap
+	if (a.x > b.x + b.width || b.x > a.x + a.width) return false;
+
+	// has vertical gap
+	if (a.y > b.y + b.height || b.y > a.y + a.height) return false;
+
+	return true;
+}
 
 
 function draw(timestamp) {
@@ -78,11 +92,27 @@ function draw(timestamp) {
         // F = G(m1m2)/R2  m = mass, r = distance between
         // both masses
 
-        this.velocity.y = GFORCE*(())
+        // this.velocity.y = GFORCE*(())
+        // d = sqrt((x2-x1)^2+(y2-y1)^2))
+        
+        // Applying gravity
+        // Distance between centers
+        var distanceBetween = Math.sqrt((getCenterOfRect(rectangle).x - getCenterOfRect(FLOOR).x) ** 2 + (getCenterOfRect(rectangle).y - getCenterOfRect(FLOOR).y) ** 2);
+        rectangle.velocity.y += (GFORCE*rectangle.mass*FLOOR.mass) / distanceBetween**2 
+        
+        if (touches(rectangle, FLOOR)) {
+            rectangle.velocity.y = 0
+            console.log(rectangle.mass * GFORCE) - ((GFORCE*rectangle.mass*FLOOR.mass) / istanceBetween**2);
+        }
+        
 
         rectangle.x += rectangle.velocity.x;
         rectangle.y += rectangle.velocity.y;
 
+        // if (touches(FLOOR, rectangle)) {
+        //     rectangle.velocity.y = 0;
+        // }
+        
         // Draw
         rectangle.draw();
     }
